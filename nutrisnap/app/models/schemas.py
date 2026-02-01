@@ -41,6 +41,7 @@ class AIAdvice(BaseModel):
 class AnalyzeResponse(BaseModel):
     analysis: MealAnalysis
     image_url: str
+    meal_id: str  # MongoDB _id for meal logging confirmation
 
 from pydantic import BaseModel
 from typing import Optional

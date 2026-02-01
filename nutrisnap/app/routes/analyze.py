@@ -1,4 +1,5 @@
 import io
+from datetime import datetime, timezone
 from fastapi import APIRouter, File, UploadFile, Form, Depends, HTTPException
 from PIL import Image
 
@@ -51,12 +52,10 @@ async def analyze_food(
                 item.get("nutrition_per_portion", {})
             ),
         })
-
     # 🔹 Normalize totals
     total_nutrition = normalize_nutrition(
         raw_analysis.get("total_nutrition", {})
     )
-
     normalized_analysis = {
         "items": items,
         "total_nutrition": total_nutrition,
@@ -65,17 +64,27 @@ async def analyze_food(
     # Upload image
     image_url = upload_image(pil)
 
-    # Save to MongoDB
+    # Get current UTC timestamp
+    now_utc = datetime.now(timezone.utc)
+    meal_date = now_utc.date().isoformat()  # YYYY-MM-DD format
+
+    # Save to MongoDB with timestamp and date fields
     meal_doc = {
         "user_id": str(current_user["_id"]),
         "email": current_user["email"],
         "image_url": image_url,
         "analysis": normalized_analysis,
+        "timestamp": now_utc.isoformat(),  # ISO 8601 for sorting
+        "meal_date": meal_date,             # YYYY-MM-DD for day-based queries
+        "meal_type": None,                  # breakfast/lunch/dinner/snack (user selects)
+        "portion_multiplier": 1.0,          # For scaling nutrition
+        "status": "pending",                # pending/confirmed/archived
     }
-    meals_collection.insert_one(meal_doc)
+    result = meals_collection.insert_one(meal_doc)
 
-    # ✅ Response matches AnalyzeResponse exactly
+    # Return analysis + inserted meal ID for reference
     return {
         "analysis": normalized_analysis,
         "image_url": image_url,
+        "meal_id": str(result.inserted_id),  # New: return meal ID for logging confirmation
     }

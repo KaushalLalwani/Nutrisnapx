@@ -10,22 +10,25 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("email");
+    const user_id = localStorage.getItem("user_id");
 
-    if (token && email) {
+    if (token && email && user_id) {
       api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      setUser({ email });
+      setUser({ email, user_id });
     }
     setLoading(false);
   }, []);
 
   const login = async (email, password) => {
     const res = await api.post("/login", { email, password });
-const token = res.data.access_token;
+    const token = res.data.access_token;
+    const user_id = res.data.user_id;
 
-localStorage.setItem("token", token);
-api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-setUser({ email });
-
+    localStorage.setItem("token", token);
+    localStorage.setItem("email", email);
+    localStorage.setItem("user_id", user_id);
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    setUser({ email, user_id });
   };
 
   const register = async (email, password) => {
@@ -34,11 +37,12 @@ setUser({ email });
   };
 
   const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("email");
-  delete api.defaults.headers.common.Authorization;
-  setUser(null);
-};
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("user_id");
+    delete api.defaults.headers.common.Authorization;
+    setUser(null);
+  };
 
   return (
     <AuthContext.Provider value={{ user, loading, login, register, logout }}>

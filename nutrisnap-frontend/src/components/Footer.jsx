@@ -82,7 +82,7 @@ export default function Footer() {
 
       {/* Bottom */}
       <div className="border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} NutriSnap. Built with ❤️ using AI.
+        © {new Date().getFullYear()} NutriSnap. Built with ❤️ By Shawn Mendes.
       </div>
     </footer>
   );

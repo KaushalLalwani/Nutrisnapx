@@ -10,6 +10,7 @@ import Analyze from "./pages/Analyze";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
 import Goals from "./pages/Goals";
+import History from "./pages/History";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -39,6 +40,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Analyze />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <History />
               </ProtectedRoute>
             }
           />

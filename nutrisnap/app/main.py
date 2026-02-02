@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from datetime import datetime
 from app.routes import auth, analyze, history
 from app.routes import goals
 from app.routes import summary
-
+from app.db.mongo import mongo_client
 
 app = FastAPI(
     title="NutriSnap AI Backend",
@@ -30,5 +30,33 @@ from app.routes import community
 app.include_router(community.router)
 from app.routes import profile
 app.include_router(profile.router)
+
+# ---- Health Check Endpoint (for UptimeRobot) ----
+@app.get("/healthz")
+async def health_check():
+    """
+    Health check endpoint for UptimeRobot to keep app awake on Render free tier.
+    Checks MongoDB connection status.
+    """
+    try:
+        # Test MongoDB connection
+        mongo_client.admin.command("ping")
+        db_status = True
+    except Exception as e:
+        db_status = False
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.utcnow().isoformat(),
+            "database": "disconnected",
+            "error": str(e)
+        }, 500
+
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "database": "connected",
+        "uptime": "Render Free Tier - Active"
+    }
+
 
 

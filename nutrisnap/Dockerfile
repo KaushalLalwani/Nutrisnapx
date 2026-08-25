@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 3. Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir setuptools
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 4. Install the Chromium browser binary

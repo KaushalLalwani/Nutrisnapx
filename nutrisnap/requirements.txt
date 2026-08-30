@@ -52,6 +52,7 @@ uritemplate==4.2.0
 urllib3==2.5.0
 uvicorn==0.38.0
 playwright==1.42.0
-playwright-stealth==1.0.6
+playwright-stealth==2.0.3
 requests
 redis==5.0.3
+setuptools<70.0.0

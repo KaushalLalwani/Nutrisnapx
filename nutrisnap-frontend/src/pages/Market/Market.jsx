@@ -18,7 +18,7 @@ const fetchMarket = async (path, options) => {
 };
 
 export default function Market() {
-    const [activeTab, setActiveTab] = useState('home');
+const [activeTab, setActiveTab] = useState('search');
     const [location, setLocation] = useState({ lat: 26.4861, lon: 80.2857, address: "Sharda Nagar, Kanpur, Uttar Pradesh, India" });
     const [locInput, setLocInput] = useState(location.address);
     const [locResults, setLocResults] = useState([]);
@@ -47,8 +47,8 @@ export default function Market() {
     }, [categories]);
 
     useEffect(() => {
-        if (currentCategory) loadCategoryHome();
-    }, [currentCategory, location]);
+    if (currentCategory && categories.length > 0) loadCategoryHome();
+}, [currentCategory, categories]);
 
     useEffect(() => {
         localStorage.setItem('market-basket-items', JSON.stringify(basketItems));
@@ -105,17 +105,15 @@ export default function Market() {
         }
     };
 
-    const loadCategoryHome = async () => {
-        setCategoryData(prev => ({ ...prev, status: 'Loading...', error: false }));
-        try {
-            const data = await fetchMarket(`/api/category/${currentCategory}?lat=${location.lat}&lon=${location.lon}&address=${encodeURIComponent(location.address)}`);
-            const subItems = data.rows.map(r => r.item);
-            setCategoryData({ rows: subItems, subcatResults: null, status: '', error: false });
-            if (subItems.length > 0) loadSubcategory(subItems[0]);
-        } catch (err) {
-            setCategoryData(prev => ({ ...prev, status: err.message, error: true }));
-        }
-    };
+    const loadCategoryHome = () => {
+    setCategoryData(prev => ({ ...prev, status: '', error: false }));
+    const cat = categories.find(c => c.slug === currentCategory);
+    
+    if (cat && cat.items) {
+        // Load the items into the sidebar, but DO NOT automatically trigger loadSubcategory()
+        setCategoryData({ rows: cat.items, subcatResults: null, status: '', error: false });
+    }
+};
 
     const loadSubcategory = async (itemName) => {
         setCategoryData(prev => ({ ...prev, status: `Searching for "${itemName}"...`, subcatResults: null, error: false }));

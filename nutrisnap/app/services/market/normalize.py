@@ -117,17 +117,16 @@ def from_blinkit(raw: dict) -> dict:
 
 
 def from_instamart(raw: dict) -> dict:
-    image_id = raw.get("image_id") or raw.get("image_url")
-    image_url = image_id if isinstance(image_id, str) and image_id.startswith("http") else None
-    if image_id and not image_url:
-        image_base = os.getenv(
-            "INSTAMART_IMAGE_BASE_URL",
-            "https://instamart-media-assets.swiggy.com/instamart-images/",
-        )
-        image_url = f"{image_base.rstrip('/')}/{quote(str(image_id).lstrip('/'), safe='/')}"
-    cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME")
-    if image_url and cloud_name:
-        image_url = f"https://res.cloudinary.com/{quote(cloud_name, safe='')}/image/fetch/f_auto,q_auto/{quote(image_url, safe='')}"
+    image_id = str(raw.get("image_id") or raw.get("image_url") or "").strip()
+    
+    # Directly build the standard Swiggy CDN URL
+    if image_id.startswith("http"):
+        image_url = image_id
+    elif image_id:
+        image_url = f"https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_252,h_298/{image_id}"
+    else:
+        image_url = None
+
     return {
         "platform": "instamart",
         "id": raw.get("sku_id") or raw.get("product_id"),
@@ -141,7 +140,6 @@ def from_instamart(raw: dict) -> dict:
         "rating": None,
         "eta_minutes": None,
     }
-
 
 NORMALIZERS = {"blinkit": from_blinkit, "instamart": from_instamart}
 

@@ -165,7 +165,12 @@ async def home(lat: float, lon: float, address: str = ""):
 async def categories():
     return {
         "categories": [
-            {"slug": c["slug"], "label": c["label"], "icon": c["icon"]} for c in categories_module.CATEGORIES
+            {
+                "slug": c["slug"], 
+                "label": c["label"], 
+                "icon": c["icon"],
+                "items": c.get("items", []) # Include items in the payload
+            } for c in categories_module.CATEGORIES
         ]
     }
 

@@ -31,7 +31,7 @@ def fetch_search_json_batch(
     **kwargs
 ) -> dict[str, Optional[dict]]:
     results: dict[str, Optional[dict]] = {}
-    max_pages = max(1, int(os.getenv("BLINKIT_MAX_PAGES", "2"))) # Keep default low (e.g., 2 pages)
+    max_pages = max(1, int(os.getenv("BLINKIT_MAX_PAGES", "3"))) # Keep default low (e.g., 2 pages)
     page_size = 12
 
     headers = {

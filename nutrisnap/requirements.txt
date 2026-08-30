@@ -56,3 +56,4 @@ playwright-stealth==2.0.3
 requests
 redis==5.0.3
 setuptools<70.0.0
+scrapfly-sdk

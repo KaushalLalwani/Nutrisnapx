@@ -14,7 +14,7 @@ import History from "./pages/History";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Market from './pages/Market/Market';
-
+import ChatWidget from "./components/ChatWidget"; // Import the widget
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -78,6 +78,7 @@ export default function App() {
             }
           />
         </Routes>
+        <ChatWidget />
       </main>
 
       <Footer />

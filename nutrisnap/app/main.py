@@ -32,9 +32,12 @@ app.include_router(goals.router)
 app.include_router(summary.router)
 app.include_router(market.router)
 from app.routes import community
+from app.routes import chat
 app.include_router(community.router)
 from app.routes import profile
 app.include_router(profile.router)
+app.include_router(chat.router)
+
 
 # ---- Health Check Endpoint (for UptimeRobot) ----
 @app.get("/healthz")
